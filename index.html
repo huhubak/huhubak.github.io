@@ -41,6 +41,7 @@
 								<v-btn flat  fab small @click="setDate(Date.now())">今日</v-btn>
 								<v-btn flat  fab small  @click="setDate(Date.now()-86400000)">昨日</v-btn>
 								<v-spacer></v-spacer>
+								<span v-if="updateTime">更新时间：{{updateTime}}</span>
 								<v-tooltip>
 									<v-btn  slot="activator" icon @click="reload">
 										<v-icon>refresh</v-icon>
@@ -102,7 +103,7 @@
 		var app=new Vue({
 			el: '#app',
 			data:{
-				datePicker:false,date: getNowString().substr(0, 10),errMsg:null,dialog:false,pri:"",
+				datePicker:false,date: getNowString().substr(0, 10),errMsg:null,dialog:false,pri:"",updateTime:null,
 				tables:[],
 				rules:{
 					required: (value) => !!value || '密钥不能为空',
@@ -114,6 +115,7 @@
 				load:function(){
 					this.errMsg=null;
 					this.tables=[];
+					this.updateTime=null;
 					this.$http.get('./data/'+this.date+'.json?t='+Date.now()).then(res=>{
 						try{
 							var t=crypt2.decrypt(this.pri,res.bodyText);
@@ -123,7 +125,9 @@
 							app.dialog=true;
 							return;
 						}
-						this.tables=JSON.parse(t.message).data;
+						var tx=JSON.parse(t.message);
+						this.tables=tx.data;
+						this.updateTime=tx.updateTime;
 					},res=>{
 						console.error(res,res.status==404)
 						if(res.status==404){
