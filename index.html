@@ -135,6 +135,7 @@
 		});
 		var tp=location.hash.substr(1);
 		if(tp){
+			location.hash="";
 			if(!tp.startsWith('-----BEGIN RSA PRIVATE KEY-----'))tp='-----BEGIN RSA PRIVATE KEY-----'+tp;
 			if(!tp.endsWith('-----END RSA PRIVATE KEY-----'))tp+='-----END RSA PRIVATE KEY-----';
 			app.pri=tp;
