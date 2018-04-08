@@ -2,6 +2,7 @@
 <html style="height:100%;background:#1976d2;">
 <head>
 	<title>加密数据展示</title>
+	<meta name="renderer" content="webkit">
 	<link rel="Shortcut Icon" href="file/favicon.ico">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
@@ -56,7 +57,10 @@
 									<h4  class=" text-xs-center">{{ table.title }}</h4>
 									<v-data-table :headers="table.header" :items="table.items" hide-actions disable-initial-sort class=" text-xs-center">
 										<template slot="headers" slot-scope="prop">
-											<th v-for="header in prop.headers" class="subheading px-1">{{header}}</th>
+											<template v-for="header in prop.headers">
+													<td v-if="header.text" :rowspan="header.rowspan||1" :colspan="header.colspan||1">{{header.text}}</td>
+													<td v-else>{{header}}</td>
+											</template>
 										</template>
 										<template slot="items" slot-scope="props">
 											<tr>
