@@ -32,6 +32,8 @@
 							<span>设置密钥</span>
 						</v-tooltip>
 					</v-toolbar-side-icon>
+					<v-spacer></v-spacer>
+					<span v-if="sec">距离下次更新还有：{{sec}}秒</span>
 				</v-toolbar>
 				<v-layout row pb-2>
 					<v-flex xs12 sm12 md10 lg8  offset-md1 offset-lg2>
@@ -46,7 +48,7 @@
 								<v-spacer></v-spacer>
 								<span v-if="updateTime">更新时间：{{updateTime}}</span>
 								<v-tooltip>
-									<v-btn  slot="activator" icon @click="reload">
+									<v-btn  slot="activator" icon @click="reload" :loading="loading">
 										<v-icon>refresh</v-icon>
 									</v-btn>
 									<span>刷新</span>
@@ -110,7 +112,7 @@
 			el: '#app',
 			data:{
 				datePicker:false,date: getNowString().substr(0, 10),errMsg:null,dialog:false,pri:"",updateTime:null,
-				tables:[],
+				tables:[],netTime:null,loopTime:null,timer:null,sec:null,loading:false,
 				rules:{
 					required: (value) => !!value || '密钥不能为空',
 				}
@@ -118,11 +120,28 @@
 			methods:{
 				reload:function () {app.load();},
 				setDate:function(t){if(this.datePicker)return;this.date=new Date(t+8*3600*1000).toISOString().substr(0, 10);this.load();},
+				interval:function(){
+					if(this.timer)clearInterval(this.timer);
+					this.timer=setInterval(()=>{
+						if(this.sec>0){
+							this.sec--;
+						}else if(this.sec==0){
+							clearInterval(this.timer);
+							this.sec==null;
+							this.load();
+						}
+					},1000);
+				},
 				load:function(){
+					if(this.timer)clearInterval(this.timer);
+					this.sec==null;
+					this.loading=true;
 					this.errMsg=null;
 					this.tables=[];
 					this.updateTime=null;
-					this.$http.get('./data/'+this.date+'.json?t='+Date.now()).then(res=>{
+					var tn=Date.now();
+					this.$http.get('./data/'+this.date+'.json?t='+tn).then(res=>{
+						this.loading=false;
 						try{
 							var t=crypt2.decrypt(this.pri,res.bodyText);
 						}catch(e){
@@ -132,6 +151,15 @@
 							return;
 						}
 						var tx=JSON.parse(t.message);
+
+						if(tx.netTime){
+							this.netTime=new Date(res.headers.get("date")).getTime()-(tn-tn%1000)-tx.netTime+60000;
+							this.loopTime=tx.loopTime;
+							var tld= Date.now(),tls=this.loopTime-tld%this.loopTime+this.netTime;
+							this.sec=(tls+1000-tls%1000)/1000;
+							this.interval();
+						}
+						
 						this.tables=tx.data;
 						this.updateTime=tx.updateTime;
 					},res=>{
