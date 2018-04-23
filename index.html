@@ -12,11 +12,12 @@
 	<script src="https://cdn.bootcss.com/vue/2.5.13/vue.min.js"></script>
 	<script src="https://cdn.bootcss.com/vuetify/1.0.0-beta.6/vuetify.min.js"></script>
 	<script src="https://cdn.bootcss.com/vue-resource/1.5.0/vue-resource.min.js"></script>
-	<script src="file/hybrid-crypto.min.js" ></script>
+	<script src="file/hybrid-crypto.min.js"></script>
 	<style type="text/css">
 	[v-cloak] {display: none;}
 	.card--flex-toolbar {margin-top: -64px;}
 	table.table tbody td:first-child, table.table tbody td:not(:first-child), table.table tbody th:first-child, table.table tbody th:not(:first-child), table.table thead td:first-child, table.table thead td:not(:first-child), table.table thead th:first-child, table.table thead th:not(:first-child){padding: 0 5px;}
+	h4.text-xs-center{position: sticky;top:64px;z-index: 8; background: rgba(255, 255, 255, 0.8);}
 </style>
 </head>
 <body>
@@ -38,7 +39,7 @@
 				<v-layout row pb-2>
 					<v-flex xs12 sm12 md10 lg8  offset-md1 offset-lg2>
 						<v-card class="card--flex-toolbar">
-							<v-toolbar card prominent style="position: sticky;top:0;">
+							<v-toolbar card prominent style="position: sticky;top:0;z-index: 10;">
 								<v-menu  ref="datePicker" lazy :close-on-content-click="false"  v-model="datePicker" transition="slide-y-transition" offset-y full-width :nudge-right="0" min-width="290px" :return-value.sync="date">
 									<v-toolbar-title slot="activator">{{date}}</v-toolbar-title>
 									<v-date-picker v-model="date" locale="zh-cn" min="2018-03-01" no-title scrollable @change="$refs.datePicker.save(date);load()"></v-date-picker>
@@ -58,13 +59,15 @@
 							<template  v-for="(table, index) in tables">
 								<v-divider></v-divider>
 								<v-card-text>
-									<h4  class=" text-xs-center">{{ table.title }}</h4>
+									<h4  class="text-xs-center">{{ table.title }}</h4>
 									<v-data-table :headers="table.header" :items="table.items" hide-actions disable-initial-sort class=" text-xs-center">
 										<template slot="headers" slot-scope="prop">
-											<template v-for="header in prop.headers">
-													<td v-if="header.text" :rowspan="header.rowspan||1" :colspan="header.colspan||1">{{header.text}}</td>
-													<td v-else>{{header}}</td>
-											</template>
+											<tr>
+												<template v-for="header in prop.headers">
+													<th v-if="header.text" :rowspan="header.rowspan||1" :colspan="header.colspan||1">{{header.text}}</th>
+													<th v-else>{{header}}</th>
+												</template>
+											</tr>
 										</template>
 										<template slot="items" slot-scope="props">
 											<tr>
@@ -134,7 +137,7 @@
 				},
 				load:function(){
 					if(this.timer)clearInterval(this.timer);
-					this.sec==null;
+					this.sec=null;
 					this.loading=true;
 					this.errMsg=null;
 					this.tables=[];
@@ -152,7 +155,7 @@
 						}
 						var tx=JSON.parse(t.message);
 
-						if(tx.netTime){
+						if(this.date== getNowString().substr(0, 10)&&tx.netTime){
 							this.netTime=new Date(res.headers.get("date")).getTime()-(tn-tn%1000)-tx.netTime+60000;
 							this.loopTime=tx.loopTime;
 							var tld= Date.now(),tls=this.loopTime-tld%this.loopTime+this.netTime;
