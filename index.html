@@ -38,7 +38,7 @@
 				<v-layout row pb-2>
 					<v-flex xs12 sm12 md10 lg8  offset-md1 offset-lg2>
 						<v-card class="card--flex-toolbar">
-							<v-toolbar card prominent>
+							<v-toolbar card prominent style="position: sticky;top:0;">
 								<v-menu  ref="datePicker" lazy :close-on-content-click="false"  v-model="datePicker" transition="slide-y-transition" offset-y full-width :nudge-right="0" min-width="290px" :return-value.sync="date">
 									<v-toolbar-title slot="activator">{{date}}</v-toolbar-title>
 									<v-date-picker v-model="date" locale="zh-cn" min="2018-03-01" no-title scrollable @change="$refs.datePicker.save(date);load()"></v-date-picker>
@@ -163,6 +163,7 @@
 						this.tables=tx.data;
 						this.updateTime=tx.updateTime;
 					},res=>{
+						this.loading=false;
 						console.error(res,res.status==404)
 						if(res.status==404){
 							this.errMsg='未找到当日数据'
