@@ -4,7 +4,6 @@
 	<title>加密数据展示</title>
 	<meta name="theme-color" content="#1976d2" />
 	<meta name="renderer" content="webkit">
-	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<link rel="Shortcut Icon" href="file/favicon.ico">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
@@ -18,14 +17,17 @@
 	[v-cloak] {display: none;}
 	.card--flex-toolbar {margin-top: -64px;}
 	table.table tbody td:first-child, table.table tbody td:not(:first-child), table.table tbody th:first-child, table.table tbody th:not(:first-child), table.table thead td:first-child, table.table thead td:not(:first-child), table.table thead th:first-child, table.table thead th:not(:first-child){padding: 0 5px;}
-	h4.text-xs-center{position: sticky;top:64px;z-index: 8; background: rgba(255, 255, 255, 0.8);}
+	h4.text-xs-center{position: sticky;top:48px;z-index: 8; background: rgba(255, 255, 255, 0.8);}
+	.card--flex-toolbar.card {margin-top: -48px;}
+	@media only screen and (max-width: 599px){.toolbar .toolbar__content>:not(.btn):not(.menu):last-child:not(:only-child), .toolbar .toolbar__extension>:not(.btn):not(.menu):last-child:not(:only-child) {margin-right: 5px;}
+.toolbar__title{margin-left:0;}}
 </style>
 </head>
 <body>
 	<div id="app" v-cloak>
 		<v-app>
 			<v-card flat>
-				<v-toolbar dark color="primary" flat extended>
+				<v-toolbar dark color="primary" flat extended dense>
 					<v-toolbar-side-icon>
 						<v-tooltip bottom>
 							<v-btn  slot="activator" icon @click="dialog=true">
@@ -40,7 +42,7 @@
 				<v-layout row pb-2>
 					<v-flex xs12 sm12 md10 lg8  offset-md1 offset-lg2>
 						<v-card class="card--flex-toolbar">
-							<v-toolbar card prominent style="position: sticky;top:0;z-index: 10;">
+							<v-toolbar card prominent style="position: sticky;top:0;z-index: 10;" dense>
 								<v-menu  ref="datePicker" lazy :close-on-content-click="false"  v-model="datePicker" transition="slide-y-transition" offset-y full-width :nudge-right="0" min-width="290px" :return-value.sync="date">
 									<v-toolbar-title slot="activator">{{date}}</v-toolbar-title>
 									<v-date-picker v-model="date" locale="zh-cn" min="2018-03-01" no-title scrollable @change="$refs.datePicker.save(date);load()"></v-date-picker>
