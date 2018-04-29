@@ -162,6 +162,7 @@
 							this.netTime=new Date(res.headers.get("date")).getTime()-(tn-tn%1000)-tx.netTime+60000;
 							this.loopTime=tx.loopTime;
 							var tld= Date.now(),tls=this.loopTime-tld%this.loopTime+this.netTime;
+							if(tld<=0)tld+=this.loopTime;
 							this.sec=(tls+1000-tls%1000)/1000;
 							this.interval();
 						}
