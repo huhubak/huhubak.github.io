@@ -38,7 +38,7 @@
 					</v-toolbar-side-icon>
 					<v-spacer></v-spacer>
 					<span v-if="sec">距离下次更新还有：{{sec}}秒</span>
-					<span v-if="runtime">查询耗时{{}}秒</span>
+					<span v-if="runtime">查询耗时:{{runtime}}秒</span>
 				</v-toolbar>
 				<v-layout row pb-2>
 					<v-flex xs12 sm12 md10 lg8  offset-md1 offset-lg2>
@@ -119,7 +119,7 @@
 			el: '#app',
 			data:{
 				datePicker:false,date: getNowString().substr(0, 10),errMsg:null,dialog:false,pri:"",updateTime:null,
-				tables:[],netTime:null,loopTime:null,timer:null,sec:null,loading:false,
+				tables:[],netTime:null,loopTime:null,timer:null,sec:null,loading:false,runtime:null,
 				rules:{
 					required: (value) => !!value || '密钥不能为空',
 				}
@@ -146,6 +146,7 @@
 					this.errMsg=null;
 					this.tables=[];
 					this.updateTime=null;
+					this.runtime=null;
 					var tn=Date.now();
 					this.$http.get('./data/'+this.date+'.json?t='+tn).then(res=>{
 						this.loading=false;
@@ -170,6 +171,7 @@
 						
 						this.tables=tx.data;
 						this.updateTime=tx.updateTime;
+						this.runtime=tx.runtime;
 					},res=>{
 						this.loading=false;
 						console.error(res,res.status==404)
