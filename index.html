@@ -38,6 +38,7 @@
 					</v-toolbar-side-icon>
 					<v-spacer></v-spacer>
 					<span v-if="sec">距离下次更新还有：{{sec}}秒</span>
+					<span v-if="runtime">查询耗时{{}}秒</span>
 				</v-toolbar>
 				<v-layout row pb-2>
 					<v-flex xs12 sm12 md10 lg8  offset-md1 offset-lg2>
